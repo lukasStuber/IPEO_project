@@ -22,9 +22,8 @@ nb_segments = 300000
 # get the path of the image
 file_path = os.path.dirname(os.path.realpath(__file__))
 #image_name = 'swissimage_cropped2.tif'
-image_name = 'swissimage-dop10_2022_2682-1249_0.1_2056.tif'
+image_name = '???????????.tif'
 path_image = file_path + '/Data_images/' + image_name
-
 
 # import the image
 img = cv2.imread(path_image,1)
@@ -39,10 +38,9 @@ np_img_segment = np_img_full[0:size_y, 0:size_x] #small image that gets modified
 full_size_y, full_size_x, _ = np_img_full.shape
 print("the full size image is ", full_size_x, " by ", full_size_y, " pixels.")
 
-segments = slic(np_img_full, n_segments=nb_segments)  #IMAGE of the segments
-
 #safe the clicked cars
-clicks_file = open(file_path+"/cars.txt", "w+")
+cars_file_name = file_path + "/Groundtruths/cars_" + image_name + ".txt"
+clicks_file = open(cars_file_name, "w")
 clicks_file.write("The locations of the cars in image " + image_name + "\n")
 cars_list = list()
 
@@ -50,6 +48,8 @@ cars_list = list()
 window = "image"
 cv2.namedWindow(window)
 cv2.resizeWindow(window, size_x, size_y)
+
+segments = slic(np_img_full, n_segments=nb_segments)  #IMAGE of the segments
 
 
 #this function will be called whenever the mouse is right-clicked
@@ -77,9 +77,9 @@ def next_image():
             idx_x = 0
             idx_y += 1
             np_img_segment = np_img_full[idx_y*size_y:(idx_y+1)*size_y, idx_x*size_x:(idx_x+1)*size_x] # move to the beginning of the next line
-            write_right_clicks()
-            # save the groundtruth
+            # save the data from this line of segments
             cv2.imwrite(file_path+"/groundtruth.tif", GROUND_TRUTH_full)
+            write_right_clicks()
 
     else:
         idx_x += 1
@@ -113,8 +113,30 @@ cv2.destroyAllWindows()
 clicks_file.close()
 
 # save the groundtruth
-cv2.imwrite(file_path+"/groundtruth.tif", GROUND_TRUTH_full)
-
-saved_truth = cv2.imread(file_path+"/groundtruth.tif")
-cv2.imshow("Ground truth", saved_truth)
+cv2.imwrite(file_path+"/Groundtruths/groundtruth_"+image_name, GROUND_TRUTH_full)
+cv2.imshow("Ground truth", GROUND_TRUTH_full*255)
 cv2.waitKey(0)
+
+# delete the wrong right clicks (those that were removed)
+clicks_file = open(cars_file_name, "r")
+lines = clicks_file.readlines()
+
+clicks_corrected_file = open(cars_file_name, "w")
+
+coords = []
+i = 0
+nb_wrong_clicks = 0
+while i < len(lines):
+    if lines[i][0] in str([0,1,2,3,4,5,6,7,8,9]):
+        line_int = [eval(i) for i in lines[i].replace("\n", "").split(", ")]
+        if GROUND_TRUTH_full[line_int[1], line_int[0]]:
+            coords.append(line_int)
+            clicks_corrected_file.write(lines[i])
+        else:
+            nb_wrong_clicks+=1
+    else:
+        clicks_corrected_file.write(lines[i])
+    i+=1
+
+print("deleted ", nb_wrong_clicks, " wrong clicks.")
+clicks_corrected_file.close()
