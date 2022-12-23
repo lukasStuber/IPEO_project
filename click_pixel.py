@@ -2,6 +2,7 @@ import urllib
 import cv2
 from win32api import GetSystemMetrics
 from skimage.segmentation import slic
+from skimage.io import imsave
 import numpy as np
 import os
 
@@ -17,12 +18,12 @@ size_y = 500
 is_done = False
 
 # number of segments for the slic algorithm
-nb_segments = 300000
+nb_segments = "NUMBER_OF_SEGMENTATIONS" #300000
 
 # get the path of the image
 file_path = os.path.dirname(os.path.realpath(__file__))
 #image_name = 'swissimage_cropped2.tif'
-image_name = '???????????.tif'
+image_name = 'YOUR_IMAGE_HERE.tif'
 path_image = file_path + '/Data_images/' + image_name
 
 # import the image
@@ -50,6 +51,9 @@ cv2.namedWindow(window)
 cv2.resizeWindow(window, size_x, size_y)
 
 segments = slic(np_img_full, n_segments=nb_segments)  #IMAGE of the segments
+
+segment_path= file_path + '/Segmentation/' + image_name + "_Segmentation.tif"
+imsave(segment_path,segments)
 
 
 #this function will be called whenever the mouse is right-clicked
