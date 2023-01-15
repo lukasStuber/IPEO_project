@@ -1,0 +1,13 @@
+pillow
+matplotlib
+scikit-image
+scikit-learn
+gdown
+zipfile36
+tifffile
+numpy
+matplotlib
+tqdm
+scikit-learn
+ipython
+opencv-python

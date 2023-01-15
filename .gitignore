@@ -1,2 +1,5 @@
 # ignore all files in the Data_images directory
 /Data_images/
+
+# ignore all files in the Segmentation directory
+/Segmentation/
