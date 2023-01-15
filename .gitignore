@@ -1,5 +1,5 @@
 # ignore all files in the Data_images directory
-/Data_images/
+/Data_images/swissimage*
 
 # ignore all files in the Segmentation directory
-/Segmentation/
+/Segmentation/swissimage*
