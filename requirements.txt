@@ -1,8 +1,4 @@
-pillow
-matplotlib
-scikit-image
-scikit-learn
-gdown
+pillow matplotlib scikit-image scikit-learn gdown
 zipfile36
 tifffile
 numpy
@@ -11,3 +7,4 @@ tqdm
 scikit-learn
 ipython
 opencv-python
+joblib
